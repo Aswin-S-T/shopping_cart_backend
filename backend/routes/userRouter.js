@@ -7,6 +7,7 @@ const {
   addProduct,
   addToCart,
   getCartItems,
+  deleteCartItems,
 } = require("../contollers/userController");
 const data = require("../data");
 const Product = require("../models/productModel");
@@ -57,6 +58,12 @@ userRouter.post("/add-to-cart", auth, (req, res) => {
 
 userRouter.get("/get-cart-items/:userId", auth, (req, res) => {
   getCartItems(req.params.userId).then((result) => {
+    res.send(result);
+  });
+});
+
+userRouter.get("/delete-cart/:userId", auth, (req, res) => {
+  deleteCartItems(req.params.userId).then((result) => {
     res.send(result);
   });
 });

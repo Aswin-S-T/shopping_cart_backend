@@ -174,4 +174,12 @@ module.exports = {
       }
     });
   },
+  deleteCartItems: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      await Cart.deleteOne({ userId }).then(() => {
+        successResponse.message = "All cart items deleted";
+        resolve(successResponse);
+      });
+    });
+  },
 };
