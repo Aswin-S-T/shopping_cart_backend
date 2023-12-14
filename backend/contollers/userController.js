@@ -8,6 +8,7 @@ const {
   errorResponse,
 } = require("../status");
 const bcrypt = require("bcrypt");
+const Order = require("../models/orderModel");
 
 module.exports = {
   createAccount: (data) => {
@@ -142,6 +143,24 @@ module.exports = {
         if (cart) {
           Cart.updateOne({ userId }, { $push: { cartItems: productId } }).then(
             () => {
+              Order.findOne({ userId }).then((history) => {
+                if (history) {
+                  Order.updateOne(
+                    { userId },
+                    { $push: { orderItems: productId } }
+                  );
+                } else {
+                  let item = [];
+                  item.push(productId);
+
+                  let historyModel = {
+                    userId,
+                    orderItems: item,
+                  };
+
+                  Order.create(historyModel);
+                }
+              });
               successResponse.message = "Successfully added to cart";
               resolve(successResponse);
             }
