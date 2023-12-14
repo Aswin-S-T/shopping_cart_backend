@@ -49,12 +49,28 @@ module.exports = {
       await User.findOne({ email: loginData.email }).then(async (user) => {
         if (user) {
           console.log("user exists");
+
           await bcrypt
-            .compare(user.password, loginData.password)
+            .compare(loginData.password, user.password)
             .then((same) => {
               if (same) {
-                successResponse.data = user;
-                resolve(successResponse);
+                const payload = {
+                  user: {
+                    id: user?._id,
+                  },
+                };
+                jwt.sign(
+                  payload,
+                  process.env.JWT_SECRET || "something_secret",
+                  { expiresIn: "30d" },
+                  (err, token) => {
+                    if (err) throw err;
+
+                    successResponse.data = user;
+                    successResponse.token = token;
+                    resolve(successResponse);
+                  }
+                );
               } else {
                 errorResponse.message = "Invalid username or password";
                 resolve(errorResponse);
