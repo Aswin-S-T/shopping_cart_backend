@@ -31,31 +31,31 @@ userRouter.post("/login", (req, res) => {
   });
 });
 
-userRouter.post("/add-product", auth,async (req, res) => {
+userRouter.post("/add-product", auth, async (req, res) => {
   addProduct(req.body).then((result) => {
     res.send(result);
   });
 });
 
 userRouter.get("/get-all-products", auth, (req, res) => {
-  getAllProducts().then((result) => {
+  getAllProducts(req.query).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.get("/product/:productId",auth, (req, res) => {
+userRouter.get("/product/:productId", auth, (req, res) => {
   getProductDetails(req.params.productId).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.post("/add-to-cart",auth, (req, res) => {
+userRouter.post("/add-to-cart", auth, (req, res) => {
   addToCart(req.body).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.get("/get-cart-items/:userId", auth,(req, res) => {
+userRouter.get("/get-cart-items/:userId", auth, (req, res) => {
   getCartItems(req.params.userId).then((result) => {
     res.send(result);
   });

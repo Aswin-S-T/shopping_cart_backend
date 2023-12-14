@@ -90,13 +90,36 @@ module.exports = {
       });
     });
   },
-  getAllProducts: () => {
+  getAllProducts: (query) => {
     return new Promise((resolve, reject) => {
-      let products = [];
-      Product.find().then((result) => {
-        successResponse.data = result;
-        resolve(successResponse);
-      });
+      let page = query.page || 1;
+      let pageSize = query.size || 10;
+      let sortBy = query.sortBy || "name";
+      let sortOrder = query.sortOrder || "asc";
+      const skip = (page - 1) * pageSize;
+
+      const sortOptions = {};
+      sortOptions[sortBy] = sortOrder === "asc" ? 1 : -1;
+
+      Product.find()
+        .skip(skip)
+        .limit(pageSize)
+        .sort(sortOptions)
+        .exec()
+        .then((result) => {
+          const successResponse = {
+            data: result,
+            pageInfo: {
+              page: page,
+              pageSize: pageSize,
+              totalItems: result.length,
+            },
+          };
+          resolve(successResponse);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   },
   getProductDetails: (productId) => {
