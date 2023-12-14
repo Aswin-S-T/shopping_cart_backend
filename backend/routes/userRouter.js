@@ -10,6 +10,7 @@ const {
 } = require("../contollers/userController");
 const data = require("../data");
 const Product = require("../models/productModel");
+const auth = require("../utils/auth");
 
 const userRouter = express.Router();
 
@@ -30,31 +31,31 @@ userRouter.post("/login", (req, res) => {
   });
 });
 
-userRouter.post("/add-product", async (req, res) => {
+userRouter.post("/add-product", auth,async (req, res) => {
   addProduct(req.body).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.get("/get-all-products", (req, res) => {
+userRouter.get("/get-all-products", auth, (req, res) => {
   getAllProducts().then((result) => {
     res.send(result);
   });
 });
 
-userRouter.get("/product/:productId", (req, res) => {
+userRouter.get("/product/:productId",auth, (req, res) => {
   getProductDetails(req.params.productId).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.post("/add-to-cart", (req, res) => {
+userRouter.post("/add-to-cart",auth, (req, res) => {
   addToCart(req.body).then((result) => {
     res.send(result);
   });
 });
 
-userRouter.get("/get-cart-items/:userId", (req, res) => {
+userRouter.get("/get-cart-items/:userId", auth,(req, res) => {
   getCartItems(req.params.userId).then((result) => {
     res.send(result);
   });

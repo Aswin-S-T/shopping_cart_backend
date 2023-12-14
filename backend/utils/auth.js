@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const token = req.header["authorization"] || req.body.token;
+  const token = req.headers["authorization"] || req.body.token;
 
   if (!token) {
     return res.status(401).json({ message: "Token required" });
