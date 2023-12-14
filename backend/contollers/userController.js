@@ -1,6 +1,7 @@
 const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
 const User = require("../models/userMode");
+const jwt = require("jsonwebtoken");
 const {
   forebiddenResponse,
   successResponse,
@@ -18,8 +19,24 @@ module.exports = {
         if (user) {
           resolve(forebiddenResponse);
         } else {
-          await User.create(data).then(() => {
-            resolve(successResponse);
+          await User.create(data).then((result) => {
+            const payload = {
+              user: {
+                id: result?._id,
+              },
+            };
+            jwt.sign(
+              payload,
+              process.env.JWT_SECRET || "something_secret",
+              { expiresIn: "30d" },
+              (err, token) => {
+                if (err) throw err;
+
+                successResponse.data = result;
+                successResponse.token = token;
+                resolve(successResponse);
+              }
+            );
           });
         }
       });
