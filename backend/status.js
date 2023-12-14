@@ -1,9 +1,9 @@
 module.exports = {
   successResponse: {
     status: 200,
-    data: null,
     message: "success",
     success: true,
+    data: null,
   },
   errorResponse: {
     status: 400,

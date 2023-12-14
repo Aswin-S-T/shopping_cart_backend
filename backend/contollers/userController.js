@@ -1,3 +1,5 @@
+const Cart = require("../models/cartModel");
+const Product = require("../models/productModel");
 const User = require("../models/userMode");
 const {
   forebiddenResponse,
@@ -45,6 +47,75 @@ module.exports = {
           console.log("user not exists");
         }
       });
+    });
+  },
+  addProduct: (data) => {
+    return new Promise(async (resolve, reject) => {
+      await Product.create(data).then(() => {
+        successResponse.message = "Product added";
+        resolve(successResponse);
+      });
+    });
+  },
+  getAllProducts: () => {
+    return new Promise((resolve, reject) => {
+      let products = [];
+      Product.find().then((result) => {
+        successResponse.data = result;
+        resolve(successResponse);
+      });
+    });
+  },
+  getProductDetails: (productId) => {
+    return new Promise(async (resolve, reject) => {
+      let product = await Product.findOne({ _id: productId });
+      if (product) {
+        successResponse.data = product;
+        resolve(successResponse);
+      } else {
+        errorResponse.message = "No product Found";
+        resolve(errorResponse);
+      }
+    });
+  },
+  addToCart: (data) => {
+    return new Promise(async (resolve, reject) => {
+      let { userId, productId } = data;
+
+      await Cart.findOne({ userId }).then((cart) => {
+        if (cart) {
+          Cart.updateOne({ userId }, { $push: { cartItems: productId } }).then(
+            () => {
+              successResponse.message = "Successfully added to cart";
+              resolve(successResponse);
+            }
+          );
+        } else {
+          let item = [];
+          item.push(productId);
+          let cartModel = {
+            userId,
+            cartItems: item,
+          };
+
+          Cart.create(cartModel).then(() => {
+            successResponse.message = "Successfully added to cart";
+            resolve(successResponse);
+          });
+        }
+      });
+    });
+  },
+  getCartItems: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      let cartItems = await Cart.findOne({ userId });
+      if (cartItems) {
+        successResponse.data = cartItems?.cartItems;
+        resolve(successResponse);
+      } else {
+        errorResponse.message = "No cart Found";
+        resolve(errorResponse);
+      }
     });
   },
 };
